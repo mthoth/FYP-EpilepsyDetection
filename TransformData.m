@@ -26,14 +26,15 @@ seizure_start = [2996]; %input the seizure start times in order
 seizure_stop = [3036]; %input the seizure stop times in order
 
 
-[before, after]=getEpoch(before, after, 1, 1);
-[before, after]=getEpoch(before, after, 1, 145);
-[before, after]=getEpoch(before, after, 1, 289);
+[before, after]=getEpoch(before, after, 1, 1); %2 seconds
+[before, after]=getEpoch(before, after, 1, 145); %4 seconds
+[before, after]=getEpoch(before, after, 1, 289); %6 seconds
 if time > seizure_start(seizure_count) && time <= seizure_stop(seizure_count)
     transformedData(1, 433) = 1;
 end
     transformedData(1, 433) = 0;
 time = time + 2;
+
 for row = 2:n % n = height(T) / number of rows per epoch
   if time > seizure_stop(seizure_count) && seizure_count < num_seizures
       seizure_count = seizure_count + 1;
