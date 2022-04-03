@@ -15,11 +15,11 @@ def convertDataframeToCsv(dataframe, targetName, headerNames):
 
 def appendSignalsToDataframe(signals, dataframe, edf):
     def isAValidSignalName(sigName):
-        return sigName[0].isalpha() and i < 18
+        return sigName[0].isalpha()
 
     i = 0
     for currSignal in signals:
-        if isAValidSignalName(currSignal):
+        if isAValidSignalName(currSignal) and i < 18:
             dataframe.insert(i, currSignal, edf.readSignal(i))
             i += 1
 
