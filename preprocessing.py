@@ -118,4 +118,4 @@ def Preprocessing(files, num_seizure, start, end):
             transformedData[row, 432] = 0
         time = time + 2
 
-    pd.DataFrame(transformedData).to_csv('out.csv', index=False)
+    return pd.DataFrame(transformedData)

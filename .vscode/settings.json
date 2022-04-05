@@ -1,0 +1,11 @@
+{
+    "python.terminal.activateEnvironment": true,
+    "terminal.integrated.profiles.windows": {
+        "cmd": {
+          "path": "cmd.exe",
+          "args": ["-noexit", "-file", "C:\\Windows\\System32\\cmd.exe"]
+        }
+      },
+      "terminal.integrated.defaultProfile.windows": "cmd",
+    "python.condaPath": "C:\\Users\\User\\Anaconda3\\Scripts\\conda.exe"
+}
