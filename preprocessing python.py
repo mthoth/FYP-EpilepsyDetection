@@ -17,7 +17,7 @@ def Preprocessing(files, num_seizure, start, end):
 
     n = int((h[1] / 512) - 2)
 
-    num_seizures = num_seizure  # input the number of seizures -1
+    num_seizures = num_seizure-1  # input the number of seizures -1
     seizure_count = 0
     seizure_start = start  # input the seizure start times in order
     seizure_stop = end  # input the seizure stop times in order
