@@ -8,11 +8,9 @@ def Normalize(file):
     shape = np.shape(data)
 
     data2 = pd.DataFrame.to_numpy(data)
-    output = data2[:shape[0], shape[1]-2:shape[1]-1]
-    data2 = data2[:shape[0], 1:shape[1]-2]
+    output = data2[1:shape[0], shape[1]-1:shape[1]]
+    data2 = data2[1:shape[0], :shape[1]-1]
     normalized_array = preprocessing.normalize(data2)
     normalized_array = pd.DataFrame(normalized_array)
     normalized_array[432] = output
-    print(normalized_array)
     pd.DataFrame(normalized_array).to_csv('normal_out1.csv', index=False)
-
