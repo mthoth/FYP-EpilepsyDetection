@@ -2,7 +2,7 @@ import json
 import os
 import pandas as pd
 from preprocessing import Preprocessing
-from training.myConstants import PATIENT_DIR
+from training.my_constants import PATIENT_DIR
 
 path = PATIENT_DIR
 dir_list = os.scandir(path)
