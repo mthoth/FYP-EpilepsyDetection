@@ -1,0 +1,10 @@
+.my-alert {
+   color: hsl(234, 60%, 20%);
+   background-color: hsl(234, 29%, 44%);
+   border-radius: 0.5rem;
+}
+
+.my-alert.danger {
+   color: hsl(0, 61%, 30%);
+   background-color: hsl(0, 29%, 44%);
+}

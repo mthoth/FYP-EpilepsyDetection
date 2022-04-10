@@ -1,0 +1,12 @@
+#output-data-upload[data-dash-is-loading="true"] {
+   visibility: hidden;
+}
+
+#output-data-upload[data-dash-is-loading="true"]::before {
+   font-size: 2rem;
+   font-style: italic;
+   content: "Parsing Data...";
+   display: inline-block;
+   color: rgb(65, 65, 65);
+   visibility: visible;
+}
