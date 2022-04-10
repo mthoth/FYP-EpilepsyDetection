@@ -27,8 +27,8 @@ def appendSignalsToDataframe(signals, dataframe, edf):
 def moveFileToDestination(src, dest):
     destinationDir = r'{}/{}'.format(dest, src)
     try:
-        if not os.path.exists(destinationDir):
-            os.makedirs(destinationDir)
+        if not os.path.exists(dest):
+            os.makedirs(dest)
 
         shutil.move(src, destinationDir)
         print(f'successfully saved to {destinationDir}.\n')

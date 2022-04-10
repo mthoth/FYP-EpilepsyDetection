@@ -39,11 +39,17 @@ def convertPatientFiles(prefix, patientDir):
     print(f'patient {patientDir} complete')
 
 
-pathPrefix = r'../Dataset'
-# These should be changed to YOUR specific patients
-patientDirs = (r'chb18', r'chb19', r'chb20', r'chb21', r'chb22')
+def main():
+    pathPrefix = r'../Dataset'
+    # These should be changed to YOUR specific patients
+    # patientDirs = (r'chb18', r'chb19', r'chb20', r'chb21', r'chb22')
+    patientDirs = ('chb24',)
 
-for currPatientDir in patientDirs:
-    convertPatientFiles(pathPrefix, currPatientDir)
+    for currPatientDir in patientDirs:
+        convertPatientFiles(pathPrefix, currPatientDir)
 
-print('FILE CONVERSIONS COMPLETE!')
+    print('FILE CONVERSIONS COMPLETE!')
+
+
+if __name__ == "__main__":
+    main()
