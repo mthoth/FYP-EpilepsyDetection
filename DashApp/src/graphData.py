@@ -5,7 +5,7 @@ import numpy as np
 # ! with the edf file uploaded by the user
 preprocessedFileName = f'../Dataset/chb20/output/chb20_14_Preprocessed.csv'
 preprocessedNdArr = np.asarray(pd.read_csv(preprocessedFileName))
-preprocessedNdArr = preprocessedNdArr[902:1022, :]
+preprocessedNdArr = preprocessedNdArr[930:1022, :]
 
 
 # * Simulating live data fetching...

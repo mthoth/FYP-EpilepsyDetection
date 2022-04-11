@@ -1,3 +1,4 @@
+# import io
 import base64
 from datetime import datetime
 from dash import html
@@ -10,16 +11,15 @@ def parseContents(contents, filename, date):
     if not filename.endswith('.edf'):
         return ErrorText("File format MUST be 'edf'")
 
-    contentType, constentString = contents.split(',')
-    decoded = base64.b64decode(constentString)
-    try:
-        print('should be reading an edf file...')
+    contentType, contentString = contents.split(',')
+    decoded = base64.b64decode(contentString)
 
-        df = readEdfAndConvertToDataframe(filename)
-        # * reading 'out.csv' should be replaced with the below code...
-        # df = pd.read_csv(
-        #     io.StringIO(decoded.decode('utf-8')))
-        # preprocessedData = preprocessEeg(df)
+    try:
+        preprocessedDf = readEdfAndConvertToDataframe(
+            '../Dataset/chb20/chb20_14.edf')
+        print('successful read of EDF file:')
+        # TODO: The conversion to df worked on the above example. Take the csv and do a prediction on it based on a selected model from the dropdown
+        # io.StringIO(decoded.decode('utf-8'))
 
     except Exception as e:
         print(e)

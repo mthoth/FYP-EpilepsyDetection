@@ -2,10 +2,10 @@ from dash import html, dcc
 
 
 def Container(children, padding="1rem 5rem"):
-    return html.Div(children=children, style={'padding': '1rem 5rem', 'textAlign': 'center'})
+    return html.Div(children, style={'padding': padding, 'textAlign': 'center'})
 
 
-def FileUploader(id):
+def FileUploader(id, disabled=False):
     uploaderStyle = {
         'width': '100%',
         'height': '60px',
@@ -22,13 +22,23 @@ def FileUploader(id):
             'Drag and Drop or ',
             html.A('Select Files')
         ]),
+        disabled=disabled,
         style=uploaderStyle)
 
 
 def GraphContainer(figure):
-    return html.Div([
+    return html.Div(
         dcc.Graph(figure=figure)
-    ])
+    )
+
+
+def PatientDropdown(style):
+    dropdownOptions = [f'Patient {i}' for i in range(1, 25)]
+
+    return html.Div([
+        html.Label('Select Model', htmlFor="patient-dropdown"),
+        dcc.Dropdown(dropdownOptions, value=None, id="patient-dropdown")
+    ], style=style)
 
 
 def ErrorText(children):

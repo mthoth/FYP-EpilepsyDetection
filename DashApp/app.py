@@ -1,16 +1,13 @@
-from datetime import datetime
-import io
-import base64
+# from datetime import datetime
 import pandas as pd
-
 import plotly.express as px
 from dash import Dash, html, dcc
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from helpers import parseContents
 
+import helpers as hp
 from src.edfProcessing import *
-from src.myComponents import Container, FileUploader
+from src.myComponents import Container, FileUploader, PatientDropdown
 from src.graphData import fetchLiveData
 
 stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -22,11 +19,15 @@ app.layout = html.Div([
     Container([
         html.H1(f'Seizure Detection Test'),
         html.P('Dash: A web application framework your data.'),
+
+        PatientDropdown(style={'maxWidth': '30rem', 'margin': '2rem auto'}),
+
         FileUploader(id="data-upload"),
         html.Div(id='output-data-upload'),
+
         html.Div([
-            dcc.Graph(id="my-graph"),
-            dcc.Interval(id="my-interval", interval=2*1000, n_intervals=0),
+            dcc.Graph(id="seizure-graph"),
+            dcc.Interval(id="graph-interval", interval=2*1000, n_intervals=0),
             html.H3(id="graph-time", children=None)
         ])
     ]),
@@ -42,15 +43,15 @@ app.layout = html.Div([
 def updateCsvOutput(listOfContents, listOfNames, listOfDates):
     if listOfContents is not None:
         children = [
-            parseContents(c, n, d) for c, n, d in
+            hp.parseContents(c, n, d) for c, n, d in
             list(zip([listOfContents], [listOfNames], [listOfDates]))]
         return children
 
 
 @app.callback(
-    Output('my-graph', 'figure'),
+    Output('seizure-graph', 'figure'),
     Output('graph-time', 'children'),
-    Input('my-interval', 'n_intervals')
+    Input('graph-interval', 'n_intervals')
 )
 def updateGraphOutput(n):
     def getPatientStatus(figureY):
@@ -70,6 +71,15 @@ def updateGraphOutput(n):
 
     currentGraphTime = figX[-1]
     return fig, f'Elapsed Time: {currentGraphTime}s'
+
+
+@app.callback(
+    Output('data-upload', 'disabled'),
+    Input('patient-dropdown', 'value')
+)
+def updateUploaderDisabled(dropdownVal):
+    uploaderDisabled = True if dropdownVal is None else False
+    return uploaderDisabled
 
 
 # Entry point of program

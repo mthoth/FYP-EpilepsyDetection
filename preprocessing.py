@@ -1,10 +1,10 @@
-def Preprocessing(files, num_seizure, start, end):
+def Preprocessing(filename, num_seizure, start, end):
 
     import mne
     import numpy as np
     import pandas as pd
 
-    edf = mne.io.read_raw_edf(files)
+    edf = mne.io.read_raw_edf(filename)
     raw_edf = edf.get_data()
     t = raw_edf[0:18, :]
     t = t.T
@@ -37,12 +37,6 @@ def Preprocessing(files, num_seizure, start, end):
         after = before + 511
 
         return before, after
-
-    # def bandpower(x, fs, fmin, fmax):
-    #    f, Pxx = scipy.signal.periodogram(x, fs=fs)
-    #    ind_min = np.argmax(f > fmin) - 1
-    #    ind_max = np.argmax(f > fmax) - 1
-    #    return np.trapz(Pxx[ind_min: ind_max], f[ind_min: ind_max])
 
     def bandpower(data, sf, band, window_sec=None, relative=False):
         """Compute the average power of the signal x in a specific frequency band.
