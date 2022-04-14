@@ -17,7 +17,7 @@ def noisyData(files):
     Final_Y_test = np.empty(0)
 
     for file in files:
-        curr_pd = pd.read_excel(r'C:\Users\yousef hamadeh\Senior Project\Data\{}'.format(file))
+        curr_pd = pd.read_csv(r'C:\\Users\\User\\Desktop\\seniorprojectfinal\\output\\{}'.format(file))
         X = np.array(curr_pd.iloc[:, :-1])
         y = np.array(curr_pd.iloc[:, -1])
 
@@ -42,8 +42,8 @@ def cleanData(files):
     Final_Y_test = np.empty(0)
 
     for file in files:
-        print(file)
-        curr_pd = pd.read_excel(r'C:\Users\yousef hamadeh\Senior Project\Data\{}'.format(file), usecols=best_features)
+        # print(file)
+        curr_pd = pd.read_csv(r'C:\\Users\\User\\Desktop\\seniorprojectfinal\\output\\{}'.format(file), usecols=best_features)
         X = np.array(curr_pd.iloc[:, :-1])
         y = np.array(curr_pd.iloc[:, -1])
 
@@ -73,17 +73,17 @@ def seizure(X,Y,Final_X_train, Final_Y_train, Final_X_test, Final_Y_test):
         train_size=train_portion1,
         random_state=rand_state)
 
-    X_train_fit = np.concatenate((x_seizure_train[:], x_nonseizure_train[:len(x_seizure_train)]), axis=0)
-    print(X_train_fit.shape)
-    y_train_fit = np.concatenate((y_seizure_train[:], y_nonseizure_train[:len(y_seizure_train)]), axis=0)
-    print(y_train_fit.shape)
+    X_train_fit = np.concatenate((x_seizure_train[:], x_nonseizure_train[:len(x_seizure_train)*6]), axis=0)
+    # print(X_train_fit.shape)
+    y_train_fit = np.concatenate((y_seizure_train[:], y_nonseizure_train[:len(y_seizure_train)*6]), axis=0)
+    # print(y_train_fit.shape)
 
     X_test_fit = np.concatenate((x_seizure_test[:], x_nonseizure_test[:len(x_seizure_test)*3]), axis=0)
-    print(X_test_fit.shape)
+    # print(X_test_fit.shape)
     y_test_fit = np.concatenate((y_seizure_test[:], y_nonseizure_test[:len(y_seizure_test)*3]), axis=0)
-    print(y_test_fit.shape)
-    print(f'Shape of Final X {Final_X_train.shape}')
-    print(f'Shape of X train {X_train_fit.shape}')
+    # print(y_test_fit.shape)
+    # print(f'Shape of Final X {Final_X_train.shape}')
+    # print(f'Shape of X train {X_train_fit.shape}')
     Final_X_train = np.concatenate((Final_X_train[:], X_train_fit[:]), axis=0)
     Final_Y_train = np.concatenate((Final_Y_train[:], y_train_fit[:]), axis=0)
 
@@ -108,6 +108,6 @@ def nonseizure(X,Y,Final_X_train, Final_Y_train, Final_X_test, Final_Y_test):
     return Final_X_train, Final_Y_train, Final_X_test, Final_Y_test
 
 if __name__ == "__main__":
-    files = [file for file in os.listdir(r'C:\Users\yousef hamadeh\Senior Project\Data') if '.xlsx' in file]
+    files = [file for file in os.listdir(r'C:\\Users\\User\\Desktop\\seniorprojectfinal\\output') if '.csv' in file]
     X_train, y_train, X_test, y_test = cleanData(files)
 
