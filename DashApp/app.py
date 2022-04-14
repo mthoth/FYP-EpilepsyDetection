@@ -1,85 +1,122 @@
-# from datetime import datetime
+import os
+import numpy as np
 import pandas as pd
 import plotly.express as px
 from dash import Dash, html, dcc
 from dash.dependencies import Input, Output, State
-from dash.exceptions import PreventUpdate
+from dash.exceptions import PreventUpdate, CallbackException
+import dash_bootstrap_components as dbc
 
 import helpers as hp
-from src.edfProcessing import *
-from src.myComponents import Container, FileUploader, PatientDropdown
+from src.myComponents import Container, FileUploader
 from src.graphData import fetchLiveData
+import src.training2 as trn
 
-stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = Dash(__name__, external_stylesheets=stylesheets)
+app = Dash(__name__, external_stylesheets=[dbc.themes.LUMEN])
 
 # App layout, where we put the components
 appStyles = {'textAlign': 'center', 'maxWidth': '80rem', 'margin': 'auto'}
 app.layout = html.Div([
     Container([
-        html.H1(f'Seizure Detection Test'),
-        html.P('Dash: A web application framework your data.'),
-
-        PatientDropdown(style={'maxWidth': '30rem', 'margin': '2rem auto'}),
-
-        FileUploader(id="data-upload"),
-        html.Div(id='output-data-upload'),
+        html.H1(f"Seizure Detection Test"),
+        html.Br(),
 
         html.Div([
-            dcc.Graph(id="seizure-graph"),
-            dcc.Interval(id="graph-interval", interval=2*1000, n_intervals=0),
-            html.H3(id="graph-time", children=None)
+            html.H5("Click below to start example on Patient chb20"),
+            btnStartModel := dbc.Button("Start", size="lg", color="success", n_clicks=0)
+        ]),
+
+        modelStatus := html.H5(),
+
+        html.Div([
+            seizureFigure := dcc.Graph(),
+            graphInterval := dcc.Interval(interval=2*1000, n_intervals=0),
+            patientAlert := dbc.Alert(graphTimer := html.H4(id="graph-time"), color="secondary")
         ])
     ]),
 ], style=appStyles)
 
 
 @app.callback(
-    Output('output-data-upload', 'children'),
-    Input('data-upload', 'contents'),
-    State('data-upload', 'filename'),
-    State('data-upload', 'last_modified')
+    Output(seizureFigure, "figure"),
+    Output(graphTimer, "children"),
+    Output(graphInterval, "disabled"),
+    Output(btnStartModel, "disabled"),
+    Output(modelStatus, "children"),
+    Output(patientAlert, "color"),
+    Input(graphInterval, "n_intervals"),
+    Input(btnStartModel, "n_clicks")
 )
-def updateCsvOutput(listOfContents, listOfNames, listOfDates):
-    if listOfContents is not None:
-        children = [
-            hp.parseContents(c, n, d) for c, n, d in
-            list(zip([listOfContents], [listOfNames], [listOfDates]))]
-        return children
+def updateGraphOutput(currentInterval, nClicksInput):
+    def getInitCallbackOutputs(clicks):
+        return (False, True, "Running model...") if clicks > 0 else (True, False, None)
 
-
-@app.callback(
-    Output('seizure-graph', 'figure'),
-    Output('graph-time', 'children'),
-    Input('graph-interval', 'n_intervals')
-)
-def updateGraphOutput(n):
     def getPatientStatus(figureY):
-        return "DANGER" if figureY[-1] == 1 else "OK"
+        try:
+            return "DANGER" if figureY[-1] == 1 else "OK"
+        except Exception:
+            # ? When figureY[-1] is out of bounds
+            return "???"
 
-    idxEnd = n + 10
-    figX, figY = fetchLiveData(n)
+    def getAlertColor(figureY):
+        return "danger" if getPatientStatus(figureY) == "DANGER" else "secondary"
 
-    # if idxEnd > len(figX):
-    #     raise PreventUpdate
+    def getUpdatedGraph(currTime):
+        figX, figY = fetchLiveData(currTime)
+        fig = px.line(pd.DataFrame({
+            'Time (s)': figX,
+            'Seizure Label': figY
+        }),
+            x="Time (s)", y='Seizure Label', title=f'Patient Status: {getPatientStatus(figY)}', line_shape='hv', range_y=["-0.1", "1.1"])
 
-    fig = px.line(pd.DataFrame({
-        'Time (s)': figX,
-        'Seizure Label': figY
-    }),
-        x="Time (s)", y='Seizure Label', title=f'Patient Status: {getPatientStatus(figY)}', line_shape='hv', range_y=["-0.1", "1.1"])
+        return fig, figX, figY
 
-    currentGraphTime = figX[-1]
-    return fig, f'Elapsed Time: {currentGraphTime}s'
+    def runModel():
+        try:
+            # ! To be changed depending on where you have the files on your machine
+            PREPROCESSED_DIRECTORY = f'DashApp/data/preprocessed'
+            preprocessedFiles = [file for file in os.listdir(
+                PREPROCESSED_DIRECTORY) if file.endswith('.csv')]
 
+            Xtrain, ytrain, Xtest, _ = trn.noisyData(
+                PREPROCESSED_DIRECTORY, preprocessedFiles)
+            fitModel = trn.SVM_CLASSWEIGHT_BALANCED(Xtrain, ytrain)
+            yPred: np.ndarray = fitModel.predict(Xtest)
 
-@app.callback(
-    Output('data-upload', 'disabled'),
-    Input('patient-dropdown', 'value')
-)
-def updateUploaderDisabled(dropdownVal):
-    uploaderDisabled = True if dropdownVal is None else False
-    return uploaderDisabled
+            # ! THIS SHOULD BE WHAT I WANT FOR GETTING VALUES NEAR THE FIRST SEIZURE OCCURENCE
+            timingsLabels = np.array([(2*i + 6, label)
+                                     for i, label in enumerate(yPred)])
+            timings, labels = timingsLabels[:, 0], timingsLabels[:, 1]
+            seizuresIndices = np.where(labels == 1)
+            idxOfFirstSeizure = seizuresIndices[0][0]
+            # idxSeizuresPred = [idx for idx,
+            #                    label in enumerate(yPred) if label == 1]
+            # # yTimings = [i*2 + 6 for i, label in enumerate(yPred)]
+
+            # FOR TESTING
+            return timings[idxOfFirstSeizure-10:idxOfFirstSeizure+10], labels[idxOfFirstSeizure-10:idxOfFirstSeizure+10]
+            # BASE CASE
+            # return timings, labels
+        except Exception:
+            print('Failed to train and test')
+
+    graphIntervalIsDisabled, btnStartModelIsDisabled, modelStatus = getInitCallbackOutputs(
+        nClicksInput)
+
+    # if btnStartModelIsDisabled:
+    #     figX, figY = runModel()
+    fig, figX, figY = getUpdatedGraph(currentInterval)
+    alertColor = getAlertColor(figY)
+
+    try:
+        currentGraphTime = figX[-1]
+        graphStatus = f'Elapsed Time: {currentGraphTime}s'
+    except Exception:
+        graphStatus = "Data stream ended. To run again, refresh the page."
+        alertColor = "warning"
+        modelStatus = None
+
+    return fig, graphStatus, graphIntervalIsDisabled, btnStartModelIsDisabled, modelStatus, alertColor
 
 
 # Entry point of program

@@ -33,10 +33,15 @@ def GraphContainer(figure):
 
 
 def PatientDropdown(style):
-    dropdownOptions = [f'Patient {i}' for i in range(1, 25)]
+    # TODO: choosing the patient should switch the patient
+    # ! This feature might be unnecessary...
+    dropdownOptions = {
+        'chb20': 'Patient 20',
+        'chb24': 'Patient 24',
+    }
 
     return html.Div([
-        html.Label('Select Model', htmlFor="patient-dropdown"),
+        html.Label('Select Patient', htmlFor="patient-dropdown"),
         dcc.Dropdown(dropdownOptions, value=None, id="patient-dropdown")
     ], style=style)
 

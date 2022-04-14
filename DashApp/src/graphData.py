@@ -1,11 +1,10 @@
 import pandas as pd
 import numpy as np
 
-# ! Temporary global data. The data used in "fetchLiveData()" should start
-# ! with the edf file uploaded by the user
+
 preprocessedFileName = f'../Dataset/chb20/output/chb20_14_Preprocessed.csv'
 preprocessedNdArr = np.asarray(pd.read_csv(preprocessedFileName))
-preprocessedNdArr = preprocessedNdArr[930:1022, :]
+preprocessedNdArr = preprocessedNdArr[980:992, :]
 
 
 # * Simulating live data fetching...
@@ -22,7 +21,7 @@ def fetchLiveData(dataIndex: int):
 
 
 def getPredictions():
-    # TODO: Implementation. This should run predictions on uploaded edf from user and return...
+    # TODO: Implementation. This should run predictions test data from preprocessed files and return...
     # x (time in seconds) and y (seizure labels (0/1))
     xCoordinates = preprocessedNdArr[:, 0]
     yCoordinates = preprocessedNdArr[:, -1]

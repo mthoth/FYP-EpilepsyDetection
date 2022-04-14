@@ -21,6 +21,7 @@ def readEdfAndConvertToDataframe(filename: str):
     try:
         preprocessedDataframe = Preprocessing(
             filename, -1, [0], [0])
+        print('successful read of EDF file')
         return preprocessedDataframe
     except Exception as e:
         print(f'Error reading edf file: {e}')
