@@ -2,9 +2,9 @@ import json
 import os
 import pandas as pd
 from preprocessing import Preprocessing
-from training.my_constants import PATIENT_DIR
+from training.my_constants import PATIENT_DIR2
 
-path = PATIENT_DIR
+path = PATIENT_DIR2
 dir_list = os.scandir(path)
 
 
@@ -13,6 +13,8 @@ json_data = json.load(f)
 
 for entry in dir_list:
     entry = entry.name
+    if not entry.endswith('.edf'):
+        continue
 
     try:
         json_data[entry[0:5]][entry[6:8]]
