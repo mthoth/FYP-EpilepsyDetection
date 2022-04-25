@@ -6,4 +6,4 @@
 .idea/
 .pycharm/
 
-DashApp/data/
+DashApp/data/*
