@@ -118,7 +118,24 @@ def nonseizure(X, Y, Final_X_train, Final_Y_train, Final_X_test, Final_Y_test):
     return Final_X_train, Final_Y_train, Final_X_test, Final_Y_test
 
 
+def data(files):
+    Final_X = np.empty([0, 432], dtype=object)
+    Final_Y = np.empty(0)
+
+    for file in files:
+        curr_pd = pd.read_csv(f'{PREPROCESSED_DIR}/{file}')
+        X = np.array(curr_pd.iloc[:, :-1])
+        y = np.array(curr_pd.iloc[:, -1])
+        Final_X= np.concatenate((Final_X[:], X), axis=0)
+        Final_Y = np.concatenate((Final_Y[:], y), axis=0)
+
+    x_train, x_test, y_train, y_test = train_test_split(Final_X, Final_Y, train_size=train_portion,
+                                                                                random_state=rand_state)
+    return x_train, x_test, y_train, y_test
+
+
 if __name__ == "__main__":
     files = [file for file in os.listdir(
         PREPROCESSED_DIR) if '.csv' in file]
     X_train, y_train, X_test, y_test = cleanData(files)
+
