@@ -6,7 +6,6 @@ from dash import html
 from src.edfProcessing import readEdfAndConvertToDataframe
 from src.myComponents import ErrorText
 
-
 def parseContents(contents, filename, date):
     if not filename.endswith('.edf'):
         return ErrorText("File format MUST be 'edf'")
