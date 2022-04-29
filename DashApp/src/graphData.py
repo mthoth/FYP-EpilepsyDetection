@@ -8,7 +8,7 @@ import src.training2 as trn
 
 preprocessedFileName = f'DashApp/data/preprocessed/chb20_14_Preprocessed.csv'
 preprocessedNdArr = np.asarray(pd.read_csv(preprocessedFileName))
-preprocessedNdArr = preprocessedNdArr[970:1020, :]
+preprocessedNdArr = preprocessedNdArr[960:1020, :]
 
 # figData = None
 
